@@ -9,8 +9,7 @@
 // @todo: Вывести карточки на страницу
 
 
-const cardTemplate = document.querySelector('#card-template').content;
-const placesList = document.querySelector('.places__list');
+
 
 const profileEditPopup = document.querySelector('.popup_type_edit');
 const newCardPopup = document.querySelector('.popup_type_new-card');
@@ -69,15 +68,80 @@ closePopup.forEach(function(popup){
 });
 
 
-function handleCardFormSubmit(evt) {
-    evt.preventDefault(); 
-    const name = nameInput.value;
-    const job = jobInput.value;
+function handlerLikeButton(evt){
+    evt.target.classList.toggle('card__like-button_is-active');
+}
+const imagePopup_src = document.querySelector('.popup__image');
+const imagePopup_title = document.querySelector('.popup__caption');
 
-    profileTitle.textContent = name;
-    profileDescription.textContent = job;
+const cardTemplate = document.querySelector('#card-template').content;
 
-    closeModal(profileEditPopup);
+function createCard(info){
+    const cards = cardTemplate.querySelector('.places__item').cloneNode(true);
+    const cardImage = cards.querySelector('.card__image');
+    const cardTitle = cards.querySelector('.card__title');
+    const deleteButton = cards.querySelector('.card__delete-button');
+    const likeButton = cards.querySelector('.card__like-button');
+
+    cardImage.src = info.link;
+    cardImage.alt = info.name;
+    cardTitle.textContent = info.name;
+
+    likeButton.addEventListener('click',handlerLikeButton);
+    deleteButton.addEventListener('click',function(){
+        const del = deleteButton.closest('.places__item');
+        del.remove();
+    });
+
+    cardImage.addEventListener('click',function(){
+        imagePopup_src.src = info.link;
+        imagePopup_src.alt = info.name;
+        imagePopup_title.textContent = info.name;
+        openModal(imagePopup);
+    });
+
+    return cards;
+
 
 }
-profileFormElement.addEventListener('submit', handleCardFormSubmit);
+
+
+
+
+const newPlaceForm = document.forms['new-place'];
+const cardPlace = document.querySelector('.popup__input_type_card-name');
+const cardLink = document.querySelector('.popup__input_type_url');
+const listCards = document.querySelector('.places__list')
+// занесение созданной карты
+function handleCardFormSubmit(evt) {
+    evt.preventDefault();
+    const newPlace = cardPlace.value;
+    const newLink = cardLink.value;
+
+    const newCard = createCard({
+        name: newPlace,
+        link: newLink
+    });
+    
+    listCards.prepend(newCard);
+    closeModal(newCardPopup);
+    newPlaceForm.reset();
+}
+newPlaceForm.addEventListener('submit', handleCardFormSubmit);
+
+
+initialCards.forEach(function(item){
+    listCards.append(createCard(item));
+})
+
+const newcardpopup = document.querySelector('.profile__add-button');
+
+newCardPopup.addEventListener('click',function(){
+    openModal('newCardPopup');
+})
+
+profileEditPopup.classList.add('.popup_is-animated');
+newCardPopup.classList.add('.popup_is-animated');
+imagePopup.classList.add('.popup_is-animated');
+
+
