@@ -136,8 +136,8 @@ initialCards.forEach(function(item){
 
 const newcardpopup = document.querySelector('.profile__add-button');
 
-newCardPopup.addEventListener('click',function(){
-    openModal('newCardPopup');
+newcardpopup.addEventListener('click',function(){
+    openModal(newCardPopup);
 })
 
 profileEditPopup.classList.add('.popup_is-animated');
